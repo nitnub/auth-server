@@ -1,23 +1,25 @@
-# FROM node:alpine
 FROM node:14-alpine
 
-WORKDIR /usr/auth-server
+# Create Directory for the Container
+WORKDIR /usr/src/auth-server
 
+# Only copy the package.json file to work directory
 COPY package.json .
 
-RUN npm install\
-  && npm install typescript -g
+# Install all Packages
+RUN npm install
 
-COPY . .
+# Copy all other source code to work directory
+ADD . /usr/src/auth-server
 
-RUN tsc
+# ENV MONGO_CONNECTION_STRING mongodb_data_container:/data/db
+
+# TypeScript
+RUN npm run build
 
 EXPOSE 4000
 
-ENV PORT 4000
+# Start
+CMD [ "npm", "start" ]
 
-RUN npm run build
-
-RUN npm install -g serve 
-# CMD ["npm", "build"]
-CMD ["serve", "-s", "build"]
+# EXPOSE 4000
