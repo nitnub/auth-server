@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Auth server",
   "scripts": {
-    "build": "tsc --build",
+    "build2": "tsc --build",
+    "build": "tsc -p .",
     "start": "node dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -4,10 +4,12 @@ FROM node:14-alpine
 WORKDIR /usr/src/auth-server
 
 # Only copy the package.json file to work directory
-COPY package.json .
+COPY package*.json .
 
 # Install all Packages
-RUN npm install
+# RUN npm install
+RUN npm ci
+
 
 # Copy all other source code to work directory
 ADD . /usr/src/auth-server
@@ -17,9 +19,8 @@ ADD . /usr/src/auth-server
 # TypeScript
 RUN npm run build
 
-EXPOSE 4000
+# EXPOSE 4000
 
 # Start
 CMD [ "npm", "start" ]
 
-# EXPOSE 4000
