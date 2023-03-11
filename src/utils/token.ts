@@ -1,11 +1,8 @@
 // @ts-nocheck
 import jwt from 'jsonwebtoken';
+import fetch from 'node-fetch';
 import GlobalUser from 'ts/userTypes';
-import {
-  AccessToken,
-  GoogleToken,
-  GoogleTokenSignature,
-} from 'ts/tokenTypes';
+import { AccessToken, GoogleToken, GoogleTokenSignature } from 'ts/tokenTypes';
 import { RefreshItem } from 'ts/refreshTypes';
 
 export const generateAccessToken = (user: GlobalUser) => {
@@ -68,7 +65,6 @@ export const getGoogleTokenCert = async (token: string): Promise<string> => {
   );
 
   const kid = parsedSignature.kid;
-
   const certResponse = await fetch(process.env.GOOGLE_PUBLIC_KEY_API_URL!, {
     method: 'GET',
     headers: {
@@ -79,8 +75,6 @@ export const getGoogleTokenCert = async (token: string): Promise<string> => {
   });
 
   const googleTokenCert = certResponse[kid];
-  console.log(googleTokenCert);
-
   return googleTokenCert;
 };
 
@@ -107,6 +101,6 @@ export const getTokenTimestamps = () => {
 
   const exp =
     iat + Number(process.env.REFRESH_TOKEN_LIFESPAN_IN_DAYS) * 24 * 60 * 60;
-    
+
   return { iat, exp };
 };

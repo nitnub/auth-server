@@ -148,6 +148,7 @@ class AuthService {
   verifyGoogleToken = async (token: string, res: Response) => {
     const verifiedEntry = await verifyTokenGoogle(token);
     // Check for errors
+
     if (verifiedEntry instanceof Error) {
       Logger.error(verifiedEntry);
       throw new AppError(verifiedEntry.message, 400);

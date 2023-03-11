@@ -1,5 +1,4 @@
 local_resources/
 node_modules/
 
-.env
 .git
