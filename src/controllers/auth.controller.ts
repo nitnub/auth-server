@@ -78,6 +78,25 @@ class AuthController {
 
       if (provider === 'www.google.com') {
         const resp = await this.authService.verifyGoogleToken(idToken, res);
+        console.log('RESPONSE:')
+        console.log(resp)
+
+        console.log('aaa')
+        console.log(resp.newUser)
+        console.log('aaa')
+        console.log(resp.accessToken)
+        console.log('bbb')
+        console.log(resp)
+        // if (resp.newUser) {
+        //   console.log('req.body')
+        //   console.log(req.body)
+        //   // const registerResult = await this.authService.register(newUser, res);
+        //   const signInResp = await this.authService.signin(resp.email, resp.password, res);
+        //   console.log('signInResp')
+        //   console.log(signInResp)
+        // }
+
+
         res.status(200).json({
           status: 'success',
           success: true,

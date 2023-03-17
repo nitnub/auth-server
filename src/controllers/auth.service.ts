@@ -5,6 +5,7 @@ import { RefreshItem } from '../ts/refreshTypes';
 import AppError from '../utils/appError';
 import AuthRepository from './auth.repository';
 import { Types } from 'mongoose';
+import getSecretString from '../utils/getSecretString';
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -12,10 +13,7 @@ import {
   verifyToken,
   verifyTokenGoogle,
 } from '../utils/token';
-import {
-  RefreshToken,
-  SignedInState,
-} from 'ts/tokenTypes';
+import { RefreshToken, SignedInState } from 'ts/tokenTypes';
 
 import Logger from '../libs/logger';
 
@@ -84,17 +82,22 @@ class AuthService {
     user: GlobalUser,
     res: Response
   ): Promise<SignedInState> => {
-
     // Create new access token for this user.
+
+    console.log('refresh token user info:')
+    console.log(user)
+
     const accessToken = generateAccessToken(user);
 
-    if (!user._id) throw new AppError('Unable to generate user access token', 500)
+    if (!user._id)
+      throw new AppError('Unable to generate user access token', 500);
 
     // Add new refresh entry to DB
     const refreshEntry = await this.addRefreshEntryToDB(user._id);
 
     // generate refresh token and add to cookies
-    if (!refreshEntry._doc) throw new AppError('Unable to parse refresh entry', 500)
+    if (!refreshEntry._doc)
+      throw new AppError('Unable to parse refresh entry', 500);
 
     const refreshToken = generateRefreshToken(refreshEntry._doc);
     this.addRefreshTokenToCookie(res, refreshToken, refreshEntry.exp * 1000);
@@ -106,10 +109,11 @@ class AuthService {
     user: GlobalUser,
     res: Response
   ): Promise<GlobalUser | void> => {
-
     // Add user to DB
     const createdUser = await this.authRepository.addUser(user);
-
+    if (user.newUser) {
+      createdUser.newUser = true;
+    }
     // Sign in the new user. Return accessToken refreshToken is added to cookies.
     const { accessToken, refreshToken } = await this.getsignedInState(
       createdUser,
@@ -123,6 +127,7 @@ class AuthService {
       avatar: createdUser.avatar,
       admin: createdUser.admin,
     };
+    
 
     return { sanitizedUser, accessToken };
   };
@@ -133,7 +138,8 @@ class AuthService {
       throw new AppError('Please enter a username and password', 400);
 
     // verify user exists in db (via email) and password matches
-    const user: GlobalUser | null = await this.authRepository.findUserByEmail(email) || null;
+    const user: GlobalUser | null =
+      (await this.authRepository.findUserByEmail(email)) || null;
 
     if (!user || !(await user?.isValidPassword(password)))
       throw new AppError('Unable to verify user. Please try again.', 400);
@@ -148,33 +154,77 @@ class AuthService {
   verifyGoogleToken = async (token: string, res: Response) => {
     const verifiedEntry = await verifyTokenGoogle(token);
     // Check for errors
-
+    console.log('vgt [1]');
     if (verifiedEntry instanceof Error) {
       Logger.error(verifiedEntry);
       throw new AppError(verifiedEntry.message, 400);
     }
-    
-    const { email, picture: googleAvatar, email_verified } = verifiedEntry;
+
+    console.log('vgt [2]');
+    const {
+      name,
+      email,
+      picture: googleAvatar,
+      email_verified,
+    } = verifiedEntry;
 
     // if email is not verified, exit...
     if (!email_verified) {
       throw new AppError('Unable to verify user.', 400);
     }
+    console.log('vgt [3]');
 
     // verify user exists in db (via email)
-    const user: GlobalUser | null = await this.authRepository.findUserByEmail(email) || null;
+    let user: GlobalUser | null =
+      (await this.authRepository.findUserByEmail(email)) || null;
+    console.log('vgt [4]');
 
-    if (!user)
-      throw new AppError('Unable to verify user. Please try again.', 400);
+    if (!user) {
+      console.log('vgt [5]');
+      const fullName: string[] = name.split(' ') || [];
+      const password = getSecretString();
+      // const newUser = {
+      user = {
+        firstName: fullName[0] || 'NoFirstName',
+        lastName: fullName[1] || 'NoLastName',
+        email,
+        password,
+        avatar: '/img/pic/mary.png',
+        admin: false,
+        active: true,
+        newUser: true
+      };
+      // console.log(newUser)
+      // return this.register(newUser, res);
+
+      // const registeredUser = await this.register(newUser, res);
+      const registeredUser = await this.register(user, res);
+      console.log('registered user');
+      console.log(registeredUser);
+      // if (registeredUser.success) {
+      //   console.log('vgt [6]')
+      console.log({ newUser: true, accessToken: registeredUser.accessToken });
+      return { newUser: true, accessToken: registeredUser.accessToken }
+      return registeredUser.data.resp.accessToken;
+      // } else {
+      //   console.log('vgt [7]')
+      //   return { newUser: true, email, password };
+
+      //   throw new AppError(
+      //     'Unable to verify user or create a new user. Please create a standard account.',
+      //     400
+      //   );
+      // }
+    }
 
     // If user does not have an app avatar, use their google avatar
-    if (!user.avatar || user.avatar === 'HARD-CODED-PATH-FOR-TESTING'){
-      user.avatar = googleAvatar
+    if (!user.avatar || user.avatar === 'HARD-CODED-PATH-FOR-TESTING') {
+      user.avatar = googleAvatar;
     }
 
     const { accessToken } = await this.getsignedInState(user, res);
-    return accessToken;
-
+    return { newUser: false, accessToken }
+    // return accessToken;
   };
 
   signout = async (
@@ -182,7 +232,6 @@ class AuthService {
     refreshToken: string,
     res: Response
   ): Promise<object | void> => {
-
     // verify refresh token secret
     if (!process.env.REFRESH_TOKEN_SECRET) {
       throw new AppError('Error generating refresh token', 400);
