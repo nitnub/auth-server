@@ -3,7 +3,7 @@ node_modules/
 local_resources/
 
 .env
-
+.env.*
 # Misc
 auth.log
 .env.echo

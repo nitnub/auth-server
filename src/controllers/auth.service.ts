@@ -84,9 +84,6 @@ class AuthService {
   ): Promise<SignedInState> => {
     // Create new access token for this user.
 
-    console.log('refresh token user info:')
-    console.log(user)
-
     const accessToken = generateAccessToken(user);
 
     if (!user._id)
@@ -126,8 +123,8 @@ class AuthService {
       email: createdUser.email,
       avatar: createdUser.avatar,
       admin: createdUser.admin,
+      authProvider: createdUser.authProvider || 'standard'
     };
-    
 
     return { sanitizedUser, accessToken };
   };
@@ -154,76 +151,52 @@ class AuthService {
   verifyGoogleToken = async (token: string, res: Response) => {
     const verifiedEntry = await verifyTokenGoogle(token);
     // Check for errors
-    console.log('vgt [1]');
+
     if (verifiedEntry instanceof Error) {
       Logger.error(verifiedEntry);
       throw new AppError(verifiedEntry.message, 400);
     }
 
-    console.log('vgt [2]');
-    const {
-      name,
-      email,
-      picture: googleAvatar,
-      email_verified,
-    } = verifiedEntry;
+    const { name, email, picture: avatar, email_verified } = verifiedEntry;
 
     // if email is not verified, exit...
     if (!email_verified) {
       throw new AppError('Unable to verify user.', 400);
     }
-    console.log('vgt [3]');
 
     // verify user exists in db (via email)
     let user: GlobalUser | null =
       (await this.authRepository.findUserByEmail(email)) || null;
-    console.log('vgt [4]');
 
     if (!user) {
-      console.log('vgt [5]');
+
       const fullName: string[] = name.split(' ') || [];
       const password = getSecretString();
-      // const newUser = {
+
       user = {
         firstName: fullName[0] || 'NoFirstName',
         lastName: fullName[1] || 'NoLastName',
         email,
         password,
-        avatar: '/img/pic/mary.png',
+        avatar: avatar || '/img/pic/mary.png',
         admin: false,
         active: true,
-        newUser: true
+        newUser: true,
+        authProvider: 'google'
       };
-      // console.log(newUser)
-      // return this.register(newUser, res);
 
-      // const registeredUser = await this.register(newUser, res);
       const registeredUser = await this.register(user, res);
-      console.log('registered user');
-      console.log(registeredUser);
-      // if (registeredUser.success) {
-      //   console.log('vgt [6]')
-      console.log({ newUser: true, accessToken: registeredUser.accessToken });
-      return { newUser: true, accessToken: registeredUser.accessToken }
-      return registeredUser.data.resp.accessToken;
-      // } else {
-      //   console.log('vgt [7]')
-      //   return { newUser: true, email, password };
+     
+      return { newUser: true, accessToken: registeredUser.accessToken };
 
-      //   throw new AppError(
-      //     'Unable to verify user or create a new user. Please create a standard account.',
-      //     400
-      //   );
-      // }
+    } else {
+      // Always be sure the most current avatar is used
+      this.authRepository.updateAvatar(email, avatar);
     }
 
-    // If user does not have an app avatar, use their google avatar
-    if (!user.avatar || user.avatar === 'HARD-CODED-PATH-FOR-TESTING') {
-      user.avatar = googleAvatar;
-    }
 
     const { accessToken } = await this.getsignedInState(user, res);
-    return { newUser: false, accessToken }
+    return { newUser: false, accessToken };
     // return accessToken;
   };
 

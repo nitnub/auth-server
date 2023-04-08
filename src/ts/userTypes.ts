@@ -9,6 +9,7 @@ export default interface GlobalUser  {
   admin: boolean;
   active: boolean;
   created?: Date;
+  authProvider?: string;
   isValidPassword?(password: string): Promise<Error | boolean>;
 }
 

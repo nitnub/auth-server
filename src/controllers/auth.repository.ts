@@ -40,6 +40,9 @@ class AuthRepository {
   findUserByID = async (id: Types.ObjectId) => {
     return await User.findById(id)
   }
+  updateAvatar = async (email: string, avatar: string) => {
+    return await User.updateOne({email}, {avatar})
+  }
 
 /**
  * Refresh collection

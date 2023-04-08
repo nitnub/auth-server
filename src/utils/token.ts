@@ -19,6 +19,7 @@ export const generateAccessToken = (user: GlobalUser) => {
     avatar: user.avatar,
     admin: user.admin,
     newUser: user.newUser === true,
+    authProvider: user.authProvider || 'standard'
   };
 
   return jwt.sign(

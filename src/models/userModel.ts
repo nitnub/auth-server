@@ -38,6 +38,11 @@ export const userSchema = new Schema<GlobalUser>(
       required: [true, 'User must have an active state designation'],
       default: true,
     },
+    authProvider: {
+      type: String,
+      required: [true, 'User must have an auth provider'],
+      default: 'standard',
+    },
   },
   { timestamps: true }
 );
