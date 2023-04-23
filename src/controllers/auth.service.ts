@@ -42,9 +42,12 @@ class AuthService {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       expires: new Date(refreshExpirationTime),
+      maxAge: 15000,
     };
 
     res.cookie('refreshToken', refreshToken, cookieOptions);
+    console.log('cooooooooooooooo')
+    console.log(res.header)
   };
 
   removeRefreshTokenFromCookie = (

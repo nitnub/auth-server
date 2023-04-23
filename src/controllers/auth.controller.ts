@@ -112,6 +112,8 @@ class AuthController {
 
   token = globalCatch(
     async (req: Request, res: Response): Promise<Response | void> => {
+      console.log('TOKEN:')
+      // console.log(req)
       const data = await this.authService.token(req, res);
 
       res.status(200).json({
