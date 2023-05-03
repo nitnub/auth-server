@@ -46,8 +46,6 @@ class AuthService {
     };
 
     res.cookie('refreshToken', refreshToken, cookieOptions);
-    console.log('cooooooooooooooo')
-    console.log(res.header)
   };
 
   removeRefreshTokenFromCookie = (
@@ -126,7 +124,7 @@ class AuthService {
       email: createdUser.email,
       avatar: createdUser.avatar,
       admin: createdUser.admin,
-      authProvider: createdUser.authProvider || 'standard'
+      authProvider: createdUser.authProvider || 'standard',
     };
 
     return { sanitizedUser, accessToken };
@@ -172,7 +170,6 @@ class AuthService {
       (await this.authRepository.findUserByEmail(email)) || null;
 
     if (!user) {
-
       const fullName: string[] = name.split(' ') || [];
       const password = getSecretString();
 
@@ -185,18 +182,16 @@ class AuthService {
         admin: false,
         active: true,
         newUser: true,
-        authProvider: 'google'
+        authProvider: 'google',
       };
 
       const registeredUser = await this.register(user, res);
-     
-      return { newUser: true, accessToken: registeredUser.accessToken };
 
+      return { newUser: true, accessToken: registeredUser.accessToken };
     } else {
       // Always be sure the most current avatar is used
       this.authRepository.updateAvatar(email, avatar);
     }
-
 
     const { accessToken } = await this.getsignedInState(user, res);
     return { newUser: false, accessToken };
