@@ -1,22 +1,15 @@
 import { getApp, initializeApp } from 'firebase/app';
-import { getAuth, signOut } from 'firebase/auth';
 
-// TODO: Replace the following with your app's Firebase project configuration
+
+// ** below creds are not 'secret' **
 export const firebaseConfig = {
-  apiKey: "AIzaSyCwch-_22nhgpcE8NYltiqSfq8rtytREgc",
-
-  authDomain: "restaurant-app-673c9.firebaseapp.com",
-
-  projectId: "restaurant-app-673c9",
-
-  storageBucket: "restaurant-app-673c9.appspot.com",
-
-  messagingSenderId: "736006982645",
-
-  appId: "1:736006982645:web:fc88439ab0693238f92ebc",
-
-  measurementId: "G-GGDRB919K2"
-
+  apiKey: 'AIzaSyCwch-_22nhgpcE8NYltiqSfq8rtytREgc',
+  authDomain: 'restaurant-app-673c9.firebaseapp.com',
+  projectId: 'restaurant-app-673c9',
+  storageBucket: 'restaurant-app-673c9.appspot.com',
+  messagingSenderId: '736006982645',
+  appId: '1:736006982645:web:fc88439ab0693238f92ebc',
+  measurementId: 'G-GGDRB919K2',
 };
 
 function initializeAppIfNecessary() {
@@ -38,7 +31,6 @@ function initializeAppIfNecessary() {
 
 // const app = initializeAppIfNecessary();
 // Initialize Firebase
-
 const app = initializeApp(firebaseConfig);
 
 export default app;

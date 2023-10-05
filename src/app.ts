@@ -1,6 +1,5 @@
 require('module-alias/register');
 import express from 'express';
-// import userRouter from '@/routes/userRoute';
 import userRouter from './routes/userRoute';
 import cookieParser from 'cookie-parser';
 import globalErrorHandler from './middleware/errorController';

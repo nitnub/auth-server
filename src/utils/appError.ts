@@ -4,7 +4,6 @@ export default class AppError extends Error {
   status: string;
   isOperational: boolean;
   errors?: Error[];
-  // errors?: string;
   keyValue?: object;
 
   constructor(message: string, statusCode: number) {
@@ -14,5 +13,4 @@ export default class AppError extends Error {
     this.isOperational = true;
     Error.captureStackTrace(this, this.constructor);
   }
-  // const a = {this.message, this.statusCode}/
 }

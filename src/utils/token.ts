@@ -11,7 +11,6 @@ export const generateAccessToken = (user: GlobalUser) => {
   }
 
   // generate access token payload
-  // const accessTokenPayload: AccessTokenPayload = {
   const accessTokenPayload: AccessToken = {
     id: user._id!,
     firstName: user.firstName,
@@ -32,7 +31,6 @@ export const generateAccessToken = (user: GlobalUser) => {
 };
 
 export const generateRefreshToken = (
-  // refreshTokenPayload: RefreshTokenPayload //
   refreshTokenPayload: RefreshItem
 ): string => {
   if (!process.env.REFRESH_TOKEN_SECRET) {

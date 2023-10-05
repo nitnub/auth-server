@@ -1,5 +1,4 @@
-import { Document } from 'mongoose';
-export default interface GlobalUser  {
+export default interface GlobalUser {
   _id?: string;
   firstName: string;
   lastName: string;
@@ -12,5 +11,3 @@ export default interface GlobalUser  {
   authProvider?: string;
   isValidPassword?(password: string): Promise<Error | boolean>;
 }
-
-

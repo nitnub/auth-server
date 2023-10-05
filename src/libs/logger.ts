@@ -21,7 +21,7 @@ export default class Logger {
     this.stream.write(timeStamp + args + '\n');
     console.log(chalk.yellow(timeStamp) + message);
   };
-  
+
   public static error = (args: any) => {
     const timeStamp = `[${new Date().toLocaleString()}] [ERROR] `;
     const message = typeof args === 'string' ? chalk.red(args) : args;
@@ -29,17 +29,4 @@ export default class Logger {
     this.stream.write(timeStamp + args + '\n');
     console.log(chalk.red(timeStamp) + message);
   };
-
-  // public static warn = (args: any) => {
-  //   console.log(
-  //     chalk.yellow`[${new Date().toLocaleString()}] [WARN] `,
-  //     typeof args === 'string' ? chalk.yellow(args) : args
-  //   );
-  // };
-  // public static error = (args: any) => {
-  //   console.log(
-  //     chalk.red`[${new Date().toLocaleString()}] [ERROR] `,
-  //     typeof args === 'string' ? chalk.red(args) : args
-  //   );
-  // };
 }
