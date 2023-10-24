@@ -115,5 +115,5 @@
     "app/node_modules",
     "app/local_resources"
   ],
-  "include": ["src/**/*", "dist/**/*"]
+  "include": ["src/**/*", "dist/**/*", "local_resources/verifyUser.ts", "local_resources/validateInputs.ts"]
 }

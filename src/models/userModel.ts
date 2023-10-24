@@ -1,5 +1,4 @@
-// import mongoose from 'mongoose';
-import { model, Mongoose, Schema } from 'mongoose';
+import { model, Schema } from 'mongoose';
 import GlobalUser from '../ts/userTypes';
 import isEmail from 'validator/lib/isEmail.js';
 import bcrypt from 'bcrypt';
