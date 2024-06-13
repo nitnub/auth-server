@@ -7,6 +7,9 @@ Verifies Google users via OAuth 2.0
 - Additional documentation can be found via [Google Firebase](https://firebase.google.com/docs/auth/admin/verify-id-tokens) 
 - Direct [link](https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com)
 
+## Swagger Documentation
+This project has been dockerized and is currently deployed to an AWS EC2 instance. Additional documentation can be found at [https://auth.nickbryant.dev/api-docs/](https://auth.nickbryant.dev/api-docs/)
+
 ## Resources and Attributions
 Some external UI assets have been sourced from the following free resources...
 - Favicon by icons8: <a target="_blank" href="https://icons8.com/icon/21062/bookmark">Bookmark</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
